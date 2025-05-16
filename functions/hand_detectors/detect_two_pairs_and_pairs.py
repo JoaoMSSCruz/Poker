@@ -28,7 +28,6 @@ def detect_two_pairs_and_pairs(rank_division):
         for number in range(0, len(pairs) - 1, 2):
             if only_one_ace_per_hand(pairs[number]+pairs[number+1]):
                 two_pairs.append(pairs[number]+pairs[number+1])
-
     for pair in two_pairs:
         pairs.remove([pair[0], pair[1]])
         pairs.remove([pair[2], pair[3]])

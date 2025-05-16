@@ -5,10 +5,10 @@ from functions.hand_detectors.detect_flush import detect_flush
 from functions.hand_detectors.detect_straights import detect_straights
 from functions.hand_detectors.detect_three_of_a_kind import detect_three_of_a_kind
 from functions.hand_detectors.detect_two_pairs_and_pairs import detect_two_pairs_and_pairs
-from global_variables.global_var import total_poker_hands, poker_hands_names
+from functions.hand_detectors.detect_high_cards import detect_high_cards
 
 def detect_poker_hands(hand):
-    poker_hands = []
+    poker_hands = [[] for _ in range(10)] 
 
     suit_division = [[] for _ in range(4)]    
     rank_division = [[] for _ in range(14)]   
@@ -41,33 +41,53 @@ def detect_poker_hands(hand):
             royal_flushes.append(straight_flush)
             straight_flushes.remove(straight_flush)
     
-    poker_hands.append(royal_flushes)
-    poker_hands.append(straight_flushes)
+    poker_hands[0] = royal_flushes
+    if royal_flushes != []:
+        return poker_hands
 
-    poker_hands.append(detect_four_of_a_kind(rank_division))
+    poker_hands[1] = straight_flushes
+    if straight_flushes != []:
+        return poker_hands
 
-    poker_hands.append(detect_full_house(rank_division))
+    poker_hands[2] = detect_four_of_a_kind(rank_division)
+    if poker_hands[2] != []:
+        poker_hands[9] = detect_high_cards(rank_division, 1)
+        return poker_hands
 
-    poker_hands.append(detect_flush(suit_division))
+    poker_hands[3] = detect_full_house(rank_division)
+    if poker_hands[3] != []:
+        return poker_hands
 
-    poker_hands.append(detect_straights(rank_division))
+    poker_hands[4] = detect_flush(suit_division)
+    if poker_hands[4] != []:
+        return poker_hands
 
-    poker_hands.append(detect_three_of_a_kind(rank_division))
+    poker_hands[5] = detect_straights(rank_division)
+    if poker_hands[5] != []:
+        return poker_hands
+
+    poker_hands[6] = detect_three_of_a_kind(rank_division)
+    if poker_hands[6] != []:
+        two_pairs, pairs = detect_two_pairs_and_pairs(rank_division)
+        if two_pairs != []:
+            poker_hands[7] = [two_pairs[0][0], two_pairs[0][1]]
+        elif pairs != []:
+            poker_hands[8] = two_pairs[0]
+        else:
+            poker_hands[9] = detect_high_cards(rank_division, 2)
+        return poker_hands
 
     two_pairs, pairs = detect_two_pairs_and_pairs(rank_division)
+    poker_hands[7] = two_pairs
+    if two_pairs != []:
+        poker_hands[9] = detect_high_cards(rank_division, 1)
+        return poker_hands
 
-    poker_hands.append(two_pairs)
-    poker_hands.append(pairs)
+    poker_hands[8] = pairs
+    if pairs != []:
+        poker_hands[9] = detect_high_cards(rank_division, 3)
+        return poker_hands
+
+    poker_hands[9] = detect_high_cards(rank_division, 5)
     
-    if poker_hands == [[] for _ in range(9)]:
-        print("There are no Poker Hands in this hand.") 
-    else:
-        for index, poker_hand in enumerate(poker_hands):
-            total_poker_hands[poker_hands_names[index]] += len(poker_hand)
-            print("{}: {};".format(poker_hands_names[index], len(poker_hand)))
-            if len(poker_hand) > 0:
-                for index, pk in enumerate(poker_hand):
-                    list = []
-                    for card in pk:
-                        list.append((card.get_rank(), card.get_suit()))
-                    print("{}) {};".format(index+1, list))
+    return poker_hands

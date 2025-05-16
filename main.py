@@ -1,36 +1,35 @@
 from classes.deck import Deck
-from classes.hand import Hand
-from global_variables.global_var import total_poker_hands
 from functions.poker_default.create_total_cards import create_total_cards
-from functions.poker_default.draw_cards import draw_cards
-from functions.hand_detectors.detect_poker_hands import detect_poker_hands
-from functions.sorting_alg.choose_sorting_algorithm import choose_sorting_algorithm
-
+from functions.poker_default.draw_cards_player import draw_cards_player
+from functions.poker_default.draw_cards_game import draw_cards_game
 
 def main():
-    running = True
-    while running:
-        deck = Deck(create_total_cards())
-        deck.shuffle_cards()
+    deck = Deck(create_total_cards())
+    deck.shuffle_cards()
 
-        hand = choose_sorting_algorithm(Hand(draw_cards(deck)))
+    players_number = int(input("How many players will play? "))
 
-        detect_poker_hands(hand)
-        
-        running_second = True
-        while running_second:
-            choice = int(input("Choose the next action:\n1) Show total number of Poker Hands;\n2) Deal another hand;\n3) Quit;\nChoose one number: "))
+    players = draw_cards_player(deck, players_number)
 
-            match choice:
-                case 1:
-                    print("Total number of Poker Hands:")
-                    for poker_hand in total_poker_hands.keys():
-                        print("{}: {};".format(poker_hand, total_poker_hands[poker_hand]))
-                case 2:
-                    running_second = False
-                case 3:
-                    running_second = False
-                    running = False
+    game_cards = draw_cards_game(deck)
 
+    for player in players:
+        player.add_cards(game_cards)
+        player.update_poker_hands()
+
+    player_values = []
+    for player in players:
+        total_value = player.get_total_value()
+        player_values.append(total_value)
+    player_values = list(set(player_values))
+    player_values = sorted(player_values)
+
+
+    for c in range(len(player_values)):
+        print("\n\nPlace {}:".format(c+1))
+        for player in players:
+            if player.get_total_value() == player_values[len(player_values) - c - 1]:
+                print("\nPlayer {}: {}".format(player.get_player_num(), player.get_total_value()))
+                player.show_combinations()
 
 main()
