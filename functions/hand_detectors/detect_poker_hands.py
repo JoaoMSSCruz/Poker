@@ -68,13 +68,7 @@ def detect_poker_hands(hand):
 
     poker_hands[6] = detect_three_of_a_kind(rank_division)
     if poker_hands[6] != []:
-        two_pairs, pairs = detect_two_pairs_and_pairs(rank_division)
-        if two_pairs != []:
-            poker_hands[7] = [two_pairs[0][0], two_pairs[0][1]]
-        elif pairs != []:
-            poker_hands[8] = two_pairs[0]
-        else:
-            poker_hands[9] = detect_high_cards(rank_division, 2)
+        poker_hands[9] = detect_high_cards(rank_division, 2)
         return poker_hands
 
     two_pairs, pairs = detect_two_pairs_and_pairs(rank_division)

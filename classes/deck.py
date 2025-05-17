@@ -27,4 +27,5 @@ class Deck:
                 card1 = Card(card.get_rank(), card.get_suit(), 14)
                 cards_drawn.append(card1)
             cards_drawn.append(card)
+        self.remove_cards(cards_drawn)
         return cards_drawn

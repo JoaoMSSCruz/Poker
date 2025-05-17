@@ -1,21 +1,17 @@
-from classes.deck import Deck
-from functions.poker_default.create_total_cards import create_total_cards
-from functions.poker_default.draw_cards_player import draw_cards_player
-from functions.poker_default.draw_cards_game import draw_cards_game
+from classes.game import Game
 
 def main():
-    deck = Deck(create_total_cards())
-    deck.shuffle_cards()
+    game = Game()
 
-    players_number = int(input("How many players will play? "))
+    game.create_game()
 
-    players = draw_cards_player(deck, players_number)
+    game.inicial_round()
+    game.flop_round()
+    game.turn_round()
+    game.river_round()    
 
-    game_cards = draw_cards_game(deck)
 
-    for player in players:
-        player.add_cards(game_cards)
-        player.update_poker_hands()
+    players = game.get_players()
 
     player_values = []
     for player in players:
